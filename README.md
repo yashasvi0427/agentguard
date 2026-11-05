@@ -36,3 +36,17 @@ Next: freeze policy and semantics; ask an independent author to add unseen attac
 `python3 biomedical.py` evaluates 12 explicitly synthetic cases: public literature access, authorized deidentified/synthetic exports, verified citations, claim support and human approval. Nine unauthorized actions are blocked and three authorized actions permitted. Three additional tests verify expected decisions, missing/typed metadata and that an injected instruction cannot grant approval.
 
 This tests enforcement of supplied metadata, not an ability to identify patient information, verify papers, evaluate scientific claims or detect real prompt injections. Those predicates are assumed trusted and require independent verification upstream. No real biomedical data, clinical decisions or biological protocols are present. A useful next study would independently annotate public literature summaries and measure citation/claim-verification errors before connecting the policy to a research assistant. This is an extension of the same project, not a separate completed biomedical research contribution.
+
+## Real biomedical dataset: PubMedQA
+
+The project now includes a real-data selective-prediction experiment, separate from the synthetic policy checks:
+
+```
+python3 fetch_pubmedqa.py
+python3 pubmedqa_eval.py
+python3 -m unittest discover -s tests -v
+```
+
+On a deterministic custom 599/199/202 train/development/test split of expert-labeled PubMedQA, a simple text classifier scores **106/202 (52.48%)**, below the majority baseline's **111/202 (54.95%)**. No threshold meets the pre-set development accuracy/coverage constraint, so the selective policy abstains on **202/202** test questions. This is a negative finding about a weak baseline and the cost of abstention, not a safety success. No LLM calls or paid inference were used.
+
+See [full protocol and results](results/PUBMEDQA.md), [machine-readable evidence](results/pubmedqa.json), and [source provenance](data/pubmedqa/README.md). Raw dataset text stays local; outputs contain IDs and aggregate/prediction data. Fourteen repository tests pass.
